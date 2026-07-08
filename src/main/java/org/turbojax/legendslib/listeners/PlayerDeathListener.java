@@ -27,7 +27,7 @@ public class PlayerDeathListener implements Listener {
         ItemStack item = player.getInventory().getItemInMainHand();
 
         // Making sure the item is a legendary weapon
-        if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) return;
+        if (!LegendaryWeapon.isLegendary(item)) return;
 
         // Increasing the kill count
         LegendaryWeapon.incrementKillCount(item, player);

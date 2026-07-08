@@ -194,6 +194,8 @@ public class LegendaryWeapon {
     }
 
     public static List<NamespacedKey> getAbilities(AbilityType abilityType, ItemStack item) {
+        if (!isLegendary(item)) return List.of();
+
         NamespacedKey key = switch (abilityType) {
             case INVENTORY -> INVENTORY_ABILITIES_KEY;
             case HELD -> HELD_ABILITIES_KEY;
@@ -205,9 +207,13 @@ public class LegendaryWeapon {
         return deserializeAbilities(item.getPersistentDataContainer().get(key, PersistentDataType.STRING));
     }
 
+    public static boolean isLegendary(ItemStack item) {
+        return item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY);
+    }
+
     public static int getKillCount(ItemStack item, Player player) {
         // Making sure the item is a legendary weapon
-        if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) return -1;
+        if (!isLegendary(item)) return -1;
 
         UUID uuid = player.getUniqueId();
         ItemMeta meta = item.getItemMeta();
@@ -229,7 +235,7 @@ public class LegendaryWeapon {
 
     public static void setKillCount(ItemStack item, Player player, Integer count) {
         // Making sure the item is a legendary weapon
-        if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) return;
+        if (!isLegendary(item)) return;
 
         UUID uuid = player.getUniqueId();
 
@@ -251,10 +257,14 @@ public class LegendaryWeapon {
     }
 
     public static void incrementKillCount(ItemStack item, Player player) {
+        if (!isLegendary(item)) return;
+
         setKillCount(item, player, getKillCount(item, player) + 1);
     }
 
     public static void decrementKillCount(ItemStack item, Player player) {
+        if (!isLegendary(item)) return;
+
         int count = getKillCount(item, player);
         if (count == 0) return;
 

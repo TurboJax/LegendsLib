@@ -43,7 +43,7 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
                 if (item == null) continue;
 
                 // Skipping non-legendary items
-                if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) continue;
+                if (!LegendaryWeapon.isLegendary(item)) continue;
 
                 // Executing inventory abilities
                 LegendaryWeapon.getAbilities(AbilityType.INVENTORY, item)
