@@ -15,11 +15,11 @@ import java.util.Objects;
 import java.util.Set;
 
 public class WeaponConfig {
-    public final Plugin plugin;
+    public final LegendsLib plugin;
     public final File file;
     public final FileConfiguration config = new YamlConfiguration();
 
-    public WeaponConfig(Plugin plugin) {
+    public WeaponConfig(LegendsLib plugin) {
         this.plugin = plugin;
         this.file = new File(plugin.getDataFolder(), "weapons.yml");
     }
