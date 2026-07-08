@@ -50,7 +50,7 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
                         .stream()
                         .map(AbilityRegistry::getInventoryAbility)
                         .filter(Objects::nonNull)
-                        .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(LegendaryWeapon.getKillCount(item, p), p)));
+                        .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(item, p)));
             }
 
             // Executing held item abilities in the player's main hand
@@ -59,7 +59,7 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
                     .stream()
                     .map(AbilityRegistry::getInventoryAbility)
                     .filter(Objects::nonNull)
-                    .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(LegendaryWeapon.getKillCount(mainItem, p), p)));
+                    .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(mainItem, p)));
 
             // Executing held item abilities for items in the player's offhand
             ItemStack offItem = p.getInventory().getItemInOffHand();
@@ -67,7 +67,7 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
                     .stream()
                     .map(AbilityRegistry::getInventoryAbility)
                     .filter(Objects::nonNull)
-                    .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(LegendaryWeapon.getKillCount(offItem, p), p)));
+                    .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(offItem, p)));
         }
     }
 }

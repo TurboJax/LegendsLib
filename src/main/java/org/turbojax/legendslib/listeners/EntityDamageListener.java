@@ -34,6 +34,6 @@ public class EntityDamageListener implements Listener {
                 .stream()
                 .map(AbilityRegistry::getInventoryAbility)
                 .filter(Objects::nonNull)
-                .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(LegendaryWeapon.getKillCount(item, damager), damager)));
+                .forEach(ability -> Bukkit.getScheduler().runTask(plugin, t -> ability.accept(item, damager)));
     }
 }
