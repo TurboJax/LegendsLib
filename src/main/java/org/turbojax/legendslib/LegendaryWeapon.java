@@ -125,6 +125,8 @@ public class LegendaryWeapon {
     }
 
     public ItemStack createItem() {
+        if (material == null) throw new IllegalArgumentException("Weapons need to have a specified material.");
+
         ItemStack item = new ItemStack(material);
 
         // Editing the item metadata
