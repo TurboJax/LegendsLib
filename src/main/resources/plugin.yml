@@ -4,3 +4,9 @@ author: TurboJax
 
 api-version: '${minecraftVersion}'
 main: org.turbojax.legendslib.LegendsLib
+
+commands:
+  legendslib:
+    description: "The main command for Legends Lib"
+    usage: "/legendslib help"
+    aliases: [ll]
