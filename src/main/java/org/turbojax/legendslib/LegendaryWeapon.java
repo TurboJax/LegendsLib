@@ -86,9 +86,22 @@ public record LegendaryWeapon(Material material, List<Float> cmdFloats, List<Str
     private static String serializeAbilities(List<NamespacedKey> abilities) {
         return abilities.stream().map(NamespacedKey::asString).collect(Collectors.joining(";"));
     }
+
     private static List<NamespacedKey> deserializeAbilities(@Nullable String abilities) {
         if (abilities == null) return List.of();
 
         return Stream.of(abilities.split(";")).map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public static List<NamespacedKey> getAbilities(AbilityType abilityType, ItemStack item) {
+        NamespacedKey key = switch (abilityType) {
+            case INVENTORY -> INVENTORY_ABILITIES_KEY;
+            case HELD -> HELD_ABILITIES_KEY;
+            case ATTACKING -> ATTACKING_ABILITIES_KEY;
+            case PRIMARY -> PRIMARY_ABILITIES_KEY;
+            case SECONDARY -> SECONDARY_ABILITIES_KEY;
+        };
+
+        return deserializeAbilities(item.getPersistentDataContainer().get(key, PersistentDataType.STRING));
     }
 }
