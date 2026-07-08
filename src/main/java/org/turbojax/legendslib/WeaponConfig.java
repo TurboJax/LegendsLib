@@ -6,6 +6,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.jspecify.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
@@ -89,45 +90,126 @@ public class WeaponConfig {
     }
 
     public boolean hasWeapon(String key) {
-        String material = config.getString(key + ".material");
-
-        if (material == null) return false;
-
-        if (Material.getMaterial(material) == null) {
-            LegendsLib.LOGGER.warn("Invalid material '{}' for weapon '{}'", material, key);
-            return false;
-        }
-
-        return true;
+        return config.contains(key);
     }
 
     public LegendaryWeapon getWeapon(String key) {
-        Material material = Material.getMaterial(config.getString(key + ".material", ""));
-        assert material != null : "Invalid material for weapon \"" + key + "\"";
+        LegendaryWeapon weapon = new LegendaryWeapon();
 
-        int stackSize = config.getInt(key + ".stack_size", 1);
-        List<NamespacedKey> inventoryAbilities = config.getStringList(key + ".inventory_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
-        List<NamespacedKey> heldAbilities = config.getStringList(key + ".held_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
-        List<NamespacedKey> attackingAbilities = config.getStringList(key + ".attacking_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
-        List<NamespacedKey> primaryAbilities = config.getStringList(key + ".primary_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
-        List<NamespacedKey> secondaryAbilities = config.getStringList(key + ".secondary_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
-        List<Float> cmdFloats = config.getFloatList(key + ".custom_model_data.floats");
-        List<String> cmdStrings = config.getStringList(key + ".custom_model_data.strings");
-        NamespacedKey itemModel = NamespacedKey.fromString(config.getString(key + ".item_model", ""));
+        weapon.setMaterial(getMaterial(key));
+        weapon.setEnabled(getEnabled(key));
+        weapon.setStackSize(getStackSize(key));
+        weapon.setInventoryAbilities(getInventoryAbilities(key));
+        weapon.setHeldAbilities(getHeldAbilities(key));
+        weapon.setAttackingAbilities(getAttackingAbilities(key));
+        weapon.setPrimaryAbilities(getPrimaryAbilities(key));
+        weapon.setSecondaryAbilities(getSecondaryAbilities(key));
+        weapon.setCmdFloats(getCmdFloats(key));
+        weapon.setCmdStrings(getCmdStrings(key));
+        weapon.setItemModel(getItemModel(key));
 
-        return new LegendaryWeapon(material, cmdFloats, cmdStrings, itemModel, stackSize, inventoryAbilities, heldAbilities, attackingAbilities, primaryAbilities, secondaryAbilities);
+        return weapon;
     }
 
     public void saveWeapon(String key, LegendaryWeapon weapon) {
-        config.set(key + ".material", weapon.material().toString());
-        config.set(key + ".stack_size", weapon.stackSize());
-        config.set(key + ".inventory_abilities", weapon.inventoryAbilities().stream().map(NamespacedKey::toString).toList());
-        config.set(key + ".held_abilities", weapon.heldAbilities().stream().map(NamespacedKey::toString).toList());
-        config.set(key + ".attacking_abilities", weapon.attackingAbilities().stream().map(NamespacedKey::toString).toList());
-        config.set(key + ".primary_abilities", weapon.primaryAbilities().stream().map(NamespacedKey::toString).toList());
-        config.set(key + ".secondary_abilities", weapon.secondaryAbilities().stream().map(NamespacedKey::toString).toList());
-        config.set(key + ".custom_model_data.floats", weapon.cmdFloats());
-        config.set(key + ".custom_model_data.strings", weapon.cmdStrings());
-        config.set(key + ".item_model", weapon.itemModel());
+        setMaterial(key, weapon.getMaterial());
+        setEnabled(key, weapon.getEnabled());
+        setStackSize(key, weapon.getStackSize());
+        setInventoryAbilities(key, weapon.getInventoryAbilities());
+        setHeldAbilities(key, weapon.getHeldAbilities());
+        setAttackingAbilities(key, weapon.getAttackingAbilities());
+        setPrimaryAbilities(key, weapon.getPrimaryAbilities());
+        setSecondaryAbilities(key, weapon.getSecondaryAbilities());
+        setCmdFloats(key, weapon.getCmdFloats());
+        setCmdStrings(key, weapon.getCmdStrings());
+        setItemModel(key, weapon.getItemModel());
+    }
+
+    public @Nullable Material getMaterial(String key) {
+        return Material.getMaterial(config.getString(key + ".material", ""));
+    }
+
+    public void setMaterial(String key, @Nullable Material material) {
+        config.set(key + ".material", material);
+    }
+
+    public boolean getEnabled(String key) {
+        return config.getBoolean(key + ".enabled");
+    }
+
+    public void setEnabled(String key, boolean enabled) {
+        config.set(key + ".enabled", enabled);
+    }
+
+    public List<Float> getCmdFloats(String key) {
+        return config.getFloatList(key + ".custom_model_data.floats");
+    }
+
+    public void setCmdFloats(String key, List<Float> cmdFloats) {
+        config.set(key + ".custom_model_data.floats", cmdFloats);
+    }
+
+    public List<String> getCmdStrings(String key) {
+        return config.getStringList(key + ".custom_model_data.strings");
+    }
+
+    public void setCmdStrings(String key, List<String> cmdStrings) {
+        config.set(key + ".custom_model_data.strings", cmdStrings);
+    }
+
+    public @Nullable NamespacedKey getItemModel(String key) {
+        return NamespacedKey.fromString(config.getString(key + ".item_model", ""));
+    }
+
+    public void setItemModel(String key, @Nullable NamespacedKey itemModel) {
+        config.set(key + ".item_model", itemModel);
+    }
+
+    public int getStackSize(String key) {
+        return config.getInt(key + ".stack_size", 1);
+    }
+
+    public void setStackSize(String key, int stackSize) {
+        config.set(key + ".stack_size", stackSize);
+    }
+
+    public List<NamespacedKey> getInventoryAbilities(String key) {
+        return config.getStringList(key + ".inventory_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public void setInventoryAbilities(String key, List<NamespacedKey> inventoryAbilities) {
+        config.set(key + ".inventory_abilities", inventoryAbilities.stream().map(NamespacedKey::toString).toList());
+    }
+
+    public List<NamespacedKey> getHeldAbilities(String key) {
+        return config.getStringList(key + ".held_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public void setHeldAbilities(String key, List<NamespacedKey> heldAbilities) {
+        config.set(key + ".held_abilities", heldAbilities.stream().map(NamespacedKey::toString).toList());
+    }
+
+    public List<NamespacedKey> getAttackingAbilities(String key) {
+        return config.getStringList(key + ".attacking_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public void setAttackingAbilities(String key, List<NamespacedKey> attackingAbilities) {
+        config.set(key + ".attacking_abilities", attackingAbilities.stream().map(NamespacedKey::toString).toList());
+    }
+
+    public List<NamespacedKey> getPrimaryAbilities(String key) {
+        return config.getStringList(key + ".primary_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public void setPrimaryAbilities(String key, List<NamespacedKey> primaryAbilities) {
+        config.set(key + ".primary_abilities", primaryAbilities.stream().map(NamespacedKey::toString).toList());
+    }
+
+    public List<NamespacedKey> getSecondaryAbilities(String key) {
+        return config.getStringList(key + ".secondary_abilities").stream().map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
+    }
+
+    public void setSecondaryAbilities(String key, List<NamespacedKey> secondaryAbilities) {
+        config.set(key + ".secondary_abilities", secondaryAbilities.stream().map(NamespacedKey::toString).toList());
     }
 }
