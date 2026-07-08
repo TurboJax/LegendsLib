@@ -102,8 +102,17 @@ public class LegendsLibCommand {
 
         // Giving the players the weapon
         ItemStack item = weapon.createItem();
-        item.setAmount(count);
 
+        // Handling when max stack size is too large
+        int maxStackSize = item.getMaxStackSize();
+        while (count > maxStackSize) {
+            count -= maxStackSize;
+
+            item.setAmount(maxStackSize);
+            players.forEach(p -> p.give(item));
+        }
+
+        item.setAmount(count);
         players.forEach(p -> p.give(item));
 
         if (players.size() > 1) {
