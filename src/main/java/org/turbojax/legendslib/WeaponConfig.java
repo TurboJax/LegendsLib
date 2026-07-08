@@ -93,7 +93,9 @@ public class WeaponConfig {
         return config.contains(key);
     }
 
-    public LegendaryWeapon getWeapon(String key) {
+    public @Nullable LegendaryWeapon getWeapon(String key) {
+        if (!hasWeapon(key)) return null;
+
         LegendaryWeapon weapon = new LegendaryWeapon();
 
         weapon.setMaterial(getMaterial(key));
