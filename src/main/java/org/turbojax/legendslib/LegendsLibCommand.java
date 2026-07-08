@@ -34,8 +34,8 @@ public class LegendsLibCommand {
         this.plugin = plugin;
     }
 
-    public LiteralCommandNode<CommandSourceStack> build() {
-        return Commands.literal("legendslib")
+    public LiteralCommandNode<CommandSourceStack> build(String label) {
+        return Commands.literal(label)
                 .then(Commands.literal("give")
                         .then(Commands.argument("players", ArgumentTypes.players())
                                 .then(Commands.argument("weapon", StringArgumentType.string())

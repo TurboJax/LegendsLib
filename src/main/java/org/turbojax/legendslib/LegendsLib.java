@@ -25,7 +25,10 @@ public final class LegendsLib extends JavaPlugin {
 
         // Registering the main command
         getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,  commands -> {
-            commands.registrar().register(new LegendsLibCommand(this).build());
+            LegendsLibCommand llc = new LegendsLibCommand(this);
+
+            commands.registrar().register(llc.build("legendslib"));
+            commands.registrar().register(llc.build("ll"));
         });
     }
 
