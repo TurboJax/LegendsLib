@@ -1,0 +1,4 @@
+/legendslib
+ |- give <players> <weapon> [count]: Gives the player(s) the specified weapon.
+ |- reload: Reloads the weapon config.
+ \- help: prints a help message.
