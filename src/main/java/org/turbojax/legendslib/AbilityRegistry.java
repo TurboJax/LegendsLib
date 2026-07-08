@@ -47,6 +47,25 @@ public class AbilityRegistry {
         SECONDARY_ABILITIES.putAll(event.getSecondaryAbilities());
     }
 
+    /**
+     * Closes the AbilityRegistry.<br>
+     *
+     * This removes all abilities from the registry.<br>
+     * Not intended for external use.
+     */
+    @ApiStatus.Internal
+    public static void shutdown() {
+        if (!initialized) return;
+
+        initialized = false;
+
+        INVENTORY_ABILITIES.clear();
+        HELD_ABILITIES.clear();
+        ATTACKING_ABILITIES.clear();
+        PRIMARY_ABILITIES.clear();
+        SECONDARY_ABILITIES.clear();
+    }
+
     /** Retrieves an ability from the registry.  Returns null if no ability is found. */
     @Nullable
     public static BiConsumer<Integer,Player> getInventoryAbility(NamespacedKey key) {

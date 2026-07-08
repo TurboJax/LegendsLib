@@ -44,6 +44,22 @@ public final class LegendsLib extends JavaPlugin {
         Bukkit.getPluginManager().registerEvents(new EntityDamageListener(this), this);
     }
 
+    @Override
+    public void onDisable() {
+        // Stopping the GlobalLoop
+        GlobalLoop.stop();
+
+        // Shutting down the registry
+        AbilityRegistry.shutdown();
+
+        // Saving the config
+        weaponConfig.save();
+
+        // Unregistering event listeners
+        PlayerDeathEvent.getHandlerList().unregister(this);
+        EntityDamageByEntityEvent.getHandlerList().unregister(this);
+    }
+
     public WeaponConfig getWeaponConfig() {
         return weaponConfig;
     }
