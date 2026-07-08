@@ -1,9 +1,14 @@
 package org.turbojax.legendslib;
 
 import io.papermc.paper.plugin.lifecycle.event.types.LifecycleEvents;
+import org.bukkit.Bukkit;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.turbojax.legendslib.listeners.EntityDamageListener;
+import org.turbojax.legendslib.listeners.PlayerDeathListener;
 
 public final class LegendsLib extends JavaPlugin {
     public static final Logger LOGGER = LoggerFactory.getLogger("LegendsLib");
@@ -33,6 +38,10 @@ public final class LegendsLib extends JavaPlugin {
             commands.registrar().register(llc.build("legendslib"));
             commands.registrar().register(llc.build("ll"));
         });
+
+        // Registering event listeners
+        Bukkit.getPluginManager().registerEvents(new PlayerDeathListener(), this);
+        Bukkit.getPluginManager().registerEvents(new EntityDamageListener(this), this);
     }
 
     public WeaponConfig getWeaponConfig() {
