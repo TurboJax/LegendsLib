@@ -3,7 +3,9 @@ package org.turbojax.legendslib;
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.components.CustomModelDataComponent;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
@@ -12,6 +14,7 @@ import org.jspecify.annotations.Nullable;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,6 +25,8 @@ public class LegendaryWeapon {
     public static final NamespacedKey ATTACKING_ABILITIES_KEY = new NamespacedKey("legendslib", "attacking_abilities");
     public static final NamespacedKey PRIMARY_ABILITIES_KEY = new NamespacedKey("legendslib", "primary_abilities");
     public static final NamespacedKey SECONDARY_ABILITIES_KEY = new NamespacedKey("legendslib", "secondary_abilities");
+    public static final NamespacedKey KILL_COUNT_KEY = new NamespacedKey("legendslib", "kill_count");
+
 
     private @Nullable Material material;
     private boolean enabled;
@@ -198,5 +203,61 @@ public class LegendaryWeapon {
         };
 
         return deserializeAbilities(item.getPersistentDataContainer().get(key, PersistentDataType.STRING));
+    }
+
+    public static int getKillCount(ItemStack item, Player player) {
+        // Making sure the item is a legendary weapon
+        if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) return -1;
+
+        UUID uuid = player.getUniqueId();
+        ItemMeta meta = item.getItemMeta();
+
+        // Getting the kill count
+        if (meta == null) return 0;
+        PersistentDataContainer pdc = meta.getPersistentDataContainer();
+        String serialized = pdc.getOrDefault(KILL_COUNT_KEY, PersistentDataType.STRING, "");
+
+        String[] parts = serialized.split(";");
+        for (String part : parts) {
+            if (!part.startsWith(uuid.toString())) continue;
+
+            return Integer.parseInt(part.substring(36));
+        }
+
+        return 0;
+    }
+
+    public static void setKillCount(ItemStack item, Player player, Integer count) {
+        // Making sure the item is a legendary weapon
+        if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) return;
+
+        UUID uuid = player.getUniqueId();
+
+        // Getting the kill count
+        item.editMeta(meta -> {
+            if (meta == null) return;
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            String serialized = pdc.getOrDefault(KILL_COUNT_KEY, PersistentDataType.STRING, "");
+
+            String[] parts = serialized.split(";");
+            for (int i = 0; i < parts.length; i++) {
+                if (!parts[i].startsWith(uuid.toString())) continue;
+
+                parts[i] = uuid.toString() + count;
+            }
+
+            pdc.set(KILL_COUNT_KEY, PersistentDataType.STRING, String.join(";", parts));
+        });
+    }
+
+    public static void incrementKillCount(ItemStack item, Player player) {
+        setKillCount(item, player, getKillCount(item, player) + 1);
+    }
+
+    public static void decrementKillCount(ItemStack item, Player player) {
+        int count = getKillCount(item, player);
+        if (count == 0) return;
+
+        setKillCount(item, player, count - 1);
     }
 }
