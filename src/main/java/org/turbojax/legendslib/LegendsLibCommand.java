@@ -43,6 +43,10 @@ public class LegendsLibCommand {
                                                 .executes(this::giveWeapon)
                                         )
                                         .executes(this::giveWeapon)
+                                        .suggests((ctx, builder) -> {
+                                            plugin.getWeaponConfig().getWeapons().stream().forEach(builder::suggest);
+                                            return builder.buildFuture();
+                                        })
                                 )
                         )
                 )

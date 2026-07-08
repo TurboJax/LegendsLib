@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class WeaponConfig {
     public final Plugin plugin;
@@ -87,6 +88,10 @@ public class WeaponConfig {
         }
 
         return false;
+    }
+
+    public Set<String> getWeapons() {
+        return config.getKeys(false);
     }
 
     public boolean hasWeapon(String key) {
