@@ -1,0 +1,15 @@
+weapon_id:
+  material: DIAMOND_SWORD
+  custom_model_data:
+    floats:
+      - 1
+    strings:
+      - "hi"
+  item_model: "hello"
+  stack_size: 1
+  inventory_abilities: []
+  held_abilities: []
+  hit_abilities:
+    - 'hello'
+  primary_abilities: []
+  secondary_abilities: []
