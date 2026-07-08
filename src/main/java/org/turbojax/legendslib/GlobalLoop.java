@@ -39,6 +39,9 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
 
         for (Player p : Bukkit.getOnlinePlayers()) {
             for (ItemStack item : p.getInventory()) {
+                // Skipping empty slots
+                if (item == null) continue;
+
                 // Skipping non-legendary items
                 if (!item.getPersistentDataContainer().has(LegendaryWeapon.INVENTORY_ABILITIES_KEY)) continue;
 
