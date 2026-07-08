@@ -10,24 +10,119 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @NullMarked
-public record LegendaryWeapon(Material material, List<Float> cmdFloats, List<String> cmdStrings,
-                              @Nullable NamespacedKey itemModel, int stackSize, List<NamespacedKey> inventoryAbilities,
-                              List<NamespacedKey> heldAbilities, List<NamespacedKey> attackingAbilities,
-                              List<NamespacedKey> primaryAbilities, List<NamespacedKey> secondaryAbilities) {
-
+public class LegendaryWeapon {
     public static final NamespacedKey INVENTORY_ABILITIES_KEY = new NamespacedKey("legendslib", "inventory_abilities");
     public static final NamespacedKey HELD_ABILITIES_KEY = new NamespacedKey("legendslib", "held_abilities");
     public static final NamespacedKey ATTACKING_ABILITIES_KEY = new NamespacedKey("legendslib", "attacking_abilities");
     public static final NamespacedKey PRIMARY_ABILITIES_KEY = new NamespacedKey("legendslib", "primary_abilities");
     public static final NamespacedKey SECONDARY_ABILITIES_KEY = new NamespacedKey("legendslib", "secondary_abilities");
+
+    private @Nullable Material material;
+    private boolean enabled;
+    private List<Float> cmdFloats = List.of();
+    private List<String> cmdStrings = List.of();
+    private @Nullable NamespacedKey itemModel;
+    private int stackSize;
+
+    private List<NamespacedKey> inventoryAbilities = List.of();
+    private List<NamespacedKey> heldAbilities = List.of();
+    private List<NamespacedKey> attackingAbilities = List.of();
+    private List<NamespacedKey> primaryAbilities = List.of();
+    private List<NamespacedKey> secondaryAbilities = List.of();
+
+    public @Nullable Material getMaterial() {
+        return material;
+    }
+
+    public void setMaterial(@Nullable Material material) {
+        this.material = material;
+    }
+
+    public boolean getEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    public List<Float> getCmdFloats() {
+        return cmdFloats;
+    }
+
+    public void setCmdFloats(List<Float> cmdFloats) {
+        this.cmdFloats = cmdFloats;
+    }
+
+    public List<String> getCmdStrings() {
+        return cmdStrings;
+    }
+
+    public void setCmdStrings(List<String> cmdStrings) {
+        this.cmdStrings = cmdStrings;
+    }
+
+    public @Nullable NamespacedKey getItemModel() {
+        return itemModel;
+    }
+
+    public void setItemModel(@Nullable NamespacedKey itemModel) {
+        this.itemModel = itemModel;
+    }
+
+    public int getStackSize() {
+        return stackSize;
+    }
+
+    public void setStackSize(int stackSize) {
+        this.stackSize = stackSize;
+    }
+
+    public List<NamespacedKey> getInventoryAbilities() {
+        return inventoryAbilities;
+    }
+
+    public void setInventoryAbilities(List<NamespacedKey> inventoryAbilities) {
+        this.inventoryAbilities = inventoryAbilities;
+    }
+
+    public List<NamespacedKey> getHeldAbilities() {
+        return heldAbilities;
+    }
+
+    public void setHeldAbilities(List<NamespacedKey> heldAbilities) {
+        this.heldAbilities = heldAbilities;
+    }
+
+    public List<NamespacedKey> getAttackingAbilities() {
+        return attackingAbilities;
+    }
+
+    public void setAttackingAbilities(List<NamespacedKey> attackingAbilities) {
+        this.attackingAbilities = attackingAbilities;
+    }
+
+    public List<NamespacedKey> getPrimaryAbilities() {
+        return primaryAbilities;
+    }
+
+    public void setPrimaryAbilities(List<NamespacedKey> primaryAbilities) {
+        this.primaryAbilities = primaryAbilities;
+    }
+
+    public List<NamespacedKey> getSecondaryAbilities() {
+        return secondaryAbilities;
+    }
+
+    public void setSecondaryAbilities(List<NamespacedKey> secondaryAbilities) {
+        this.secondaryAbilities = secondaryAbilities;
+    }
 
     public ItemStack createItem() {
         ItemStack item = new ItemStack(material);
@@ -59,28 +154,26 @@ public record LegendaryWeapon(Material material, List<Float> cmdFloats, List<Str
     }
 
     public static LegendaryWeapon deserialize(ItemStack item) {
-        Material material = item.getType();
-        int stackSize = item.getMaxStackSize();
+        LegendaryWeapon weapon = new LegendaryWeapon();
+
+        weapon.setMaterial(item.getType());
+        weapon.setStackSize(item.getMaxStackSize());
 
         PersistentDataContainerView pdc = item.getPersistentDataContainer();
-        List<NamespacedKey> inventoryAbilities = deserializeAbilities(pdc.get(INVENTORY_ABILITIES_KEY, PersistentDataType.STRING));
-        List<NamespacedKey> heldAbilities = deserializeAbilities(pdc.get(HELD_ABILITIES_KEY, PersistentDataType.STRING));
-        List<NamespacedKey> attackingAbilities = deserializeAbilities(pdc.get(ATTACKING_ABILITIES_KEY, PersistentDataType.STRING));
-        List<NamespacedKey> primaryAbilities = deserializeAbilities(pdc.get(PRIMARY_ABILITIES_KEY, PersistentDataType.STRING));
-        List<NamespacedKey> secondaryAbilities = deserializeAbilities(pdc.get(SECONDARY_ABILITIES_KEY, PersistentDataType.STRING));
-
-        List<Float> cmdFloats = new ArrayList<>();
-        List<String> cmdStrings = new ArrayList<>();
-        AtomicReference<@Nullable NamespacedKey> itemModel = new AtomicReference<>();
+        weapon.setInventoryAbilities(deserializeAbilities(pdc.get(INVENTORY_ABILITIES_KEY, PersistentDataType.STRING)));
+        weapon.setHeldAbilities(deserializeAbilities(pdc.get(HELD_ABILITIES_KEY, PersistentDataType.STRING)));
+        weapon.setAttackingAbilities(deserializeAbilities(pdc.get(ATTACKING_ABILITIES_KEY, PersistentDataType.STRING)));
+        weapon.setPrimaryAbilities(deserializeAbilities(pdc.get(PRIMARY_ABILITIES_KEY, PersistentDataType.STRING)));
+        weapon.setSecondaryAbilities(deserializeAbilities(pdc.get(SECONDARY_ABILITIES_KEY, PersistentDataType.STRING)));
 
         item.editMeta(meta -> {
-            itemModel.set(meta.getItemModel());
+            weapon.setItemModel(meta.getItemModel());
 
-            cmdFloats.addAll(meta.getCustomModelDataComponent().getFloats());
-            cmdStrings.addAll(meta.getCustomModelDataComponent().getStrings());
+            weapon.setCmdFloats(meta.getCustomModelDataComponent().getFloats());
+            weapon.setCmdStrings(meta.getCustomModelDataComponent().getStrings());
         });
 
-        return new LegendaryWeapon(material, cmdFloats, cmdStrings, itemModel.get(), stackSize, inventoryAbilities, heldAbilities, attackingAbilities, primaryAbilities, secondaryAbilities);
+        return weapon;
     }
 
     private static String serializeAbilities(List<NamespacedKey> abilities) {
