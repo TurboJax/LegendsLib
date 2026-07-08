@@ -16,8 +16,10 @@ public final class LegendsLib extends JavaPlugin {
 
     @Override
     public void onEnable() {
+        // Kicking up the registry
         AbilityRegistry.init();
 
+        // Starting the global loop
         GlobalLoop.init(this);
         GlobalLoop.start();
     }

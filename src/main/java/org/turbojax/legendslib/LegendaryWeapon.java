@@ -84,7 +84,7 @@ public record LegendaryWeapon(Material material, List<Float> cmdFloats, List<Str
     }
 
     private static String serializeAbilities(List<NamespacedKey> abilities) {
-        return abilities.stream().map(NamespacedKey::asString).collect(Collectors.joining(";"));
+        return abilities.stream().map(NamespacedKey::toString).collect(Collectors.joining(";"));
     }
 
     private static List<NamespacedKey> deserializeAbilities(@Nullable String abilities) {
