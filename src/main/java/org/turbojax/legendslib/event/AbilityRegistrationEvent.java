@@ -11,14 +11,13 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class AbilityRegistrationEvent extends Event {
     private static final HandlerList HANDLER_LIST = new HandlerList();
 
-    private final Map<NamespacedKey,Runnable> inventoryAbilities = new ConcurrentHashMap<>();
-    private final Map<NamespacedKey,Runnable> heldAbilities = new ConcurrentHashMap<>();
-    private final Map<NamespacedKey,Consumer<EntityDamageByEntityEvent>> attackingAbilities = new ConcurrentHashMap<>();
+    private final Map<NamespacedKey,BiConsumer<Integer,Player>> inventoryAbilities = new ConcurrentHashMap<>();
+    private final Map<NamespacedKey,BiConsumer<Integer,Player>> heldAbilities = new ConcurrentHashMap<>();
+    private final Map<NamespacedKey,BiConsumer<Integer,EntityDamageByEntityEvent>> attackingAbilities = new ConcurrentHashMap<>();
     private final Map<NamespacedKey,BiConsumer<Integer,Player>> primaryAbilities = new ConcurrentHashMap<>();
     private final Map<NamespacedKey,BiConsumer<Integer,Player>> secondaryAbilities = new ConcurrentHashMap<>();
 
@@ -34,7 +33,7 @@ public class AbilityRegistrationEvent extends Event {
         return HANDLER_LIST;
     }
 
-    public boolean registerInventoryAbility(NamespacedKey key, Runnable runnable) {
+    public boolean registerInventoryAbility(NamespacedKey key, BiConsumer<Integer,Player> runnable) {
         if (inventoryAbilities.containsKey(key)) return false;
 
         inventoryAbilities.put(key, runnable);
@@ -42,7 +41,7 @@ public class AbilityRegistrationEvent extends Event {
         return true;
     }
 
-    public boolean registerHeldAbility(NamespacedKey key, Runnable runnable) {
+    public boolean registerHeldAbility(NamespacedKey key, BiConsumer<Integer,Player> runnable) {
         if (heldAbilities.containsKey(key)) return false;
 
         heldAbilities.put(key, runnable);
@@ -50,7 +49,7 @@ public class AbilityRegistrationEvent extends Event {
         return true;
     }
 
-    public boolean registerAttackingAbility(NamespacedKey key, Consumer<EntityDamageByEntityEvent> runnable) {
+    public boolean registerAttackingAbility(NamespacedKey key, BiConsumer<Integer,EntityDamageByEntityEvent> runnable) {
         if (attackingAbilities.containsKey(key)) return false;
 
         attackingAbilities.put(key, runnable);
@@ -75,17 +74,17 @@ public class AbilityRegistrationEvent extends Event {
     }
 
     @UnmodifiableView
-    public Map<NamespacedKey,Runnable> getInventoryAbilities() {
+    public Map<NamespacedKey,BiConsumer<Integer,Player>> getInventoryAbilities() {
         return Map.copyOf(inventoryAbilities);
     }
 
     @UnmodifiableView
-    public Map<NamespacedKey,Runnable> getHeldAbilities() {
+    public Map<NamespacedKey,BiConsumer<Integer,Player>> getHeldAbilities() {
         return Map.copyOf(heldAbilities);
     }
 
     @UnmodifiableView
-    public Map<NamespacedKey,Consumer<EntityDamageByEntityEvent>> getAttackingAbilities() {
+    public Map<NamespacedKey,BiConsumer<Integer,EntityDamageByEntityEvent>> getAttackingAbilities() {
         return Map.copyOf(attackingAbilities);
     }
 

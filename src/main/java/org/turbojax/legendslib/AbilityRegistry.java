@@ -11,12 +11,11 @@ import org.turbojax.legendslib.event.AbilityRegistrationEvent;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class AbilityRegistry {
-    private static final Map<NamespacedKey,Runnable> INVENTORY_ABILITIES = new ConcurrentHashMap<>();
-    private static final Map<NamespacedKey,Runnable> HELD_ABILITIES = new ConcurrentHashMap<>();
-    private static final Map<NamespacedKey,Consumer<EntityDamageByEntityEvent>> ATTACKING_ABILITIES = new ConcurrentHashMap<>();
+    private static final Map<NamespacedKey,BiConsumer<Integer,Player>> INVENTORY_ABILITIES = new ConcurrentHashMap<>();
+    private static final Map<NamespacedKey,BiConsumer<Integer,Player>> HELD_ABILITIES = new ConcurrentHashMap<>();
+    private static final Map<NamespacedKey,BiConsumer<Integer,EntityDamageByEntityEvent>> ATTACKING_ABILITIES = new ConcurrentHashMap<>();
     private static final Map<NamespacedKey,BiConsumer<Integer,Player>> PRIMARY_ABILITIES = new ConcurrentHashMap<>();
     private static final Map<NamespacedKey,BiConsumer<Integer,Player>> SECONDARY_ABILITIES = new ConcurrentHashMap<>();
 
@@ -50,19 +49,19 @@ public class AbilityRegistry {
 
     /** Retrieves an ability from the registry.  Returns null if no ability is found. */
     @Nullable
-    public static Runnable getInventoryAbility(NamespacedKey key) {
+    public static BiConsumer<Integer,Player> getInventoryAbility(NamespacedKey key) {
         return INVENTORY_ABILITIES.get(key);
     }
 
     /** Retrieves an ability from the registry.  Returns null if no ability is found. */
     @Nullable
-    public static Runnable getHeldAbility(NamespacedKey key) {
+    public static BiConsumer<Integer,Player> getHeldAbility(NamespacedKey key) {
         return HELD_ABILITIES.get(key);
     }
 
     /** Retrieves an ability from the registry.  Returns null if no ability is found. */
     @Nullable
-    public static Consumer<EntityDamageByEntityEvent> getAttackingAbility(NamespacedKey key) {
+    public static BiConsumer<Integer,EntityDamageByEntityEvent> getAttackingAbility(NamespacedKey key) {
         return ATTACKING_ABILITIES.get(key);
     }
 
@@ -79,17 +78,17 @@ public class AbilityRegistry {
     }
 
     @UnmodifiableView
-    public static Map<NamespacedKey,Runnable> getInventoryAbilities() {
+    public static Map<NamespacedKey,BiConsumer<Integer,Player>> getInventoryAbilities() {
         return Map.copyOf(INVENTORY_ABILITIES);
     }
 
     @UnmodifiableView
-    public static Map<NamespacedKey,Runnable> getHeldAbilities() {
+    public static Map<NamespacedKey,BiConsumer<Integer,Player>> getHeldAbilities() {
         return Map.copyOf(HELD_ABILITIES);
     }
 
     @UnmodifiableView
-    public static Map<NamespacedKey,Consumer<EntityDamageByEntityEvent>> getAttackingAbilities() {
+    public static Map<NamespacedKey,BiConsumer<Integer,EntityDamageByEntityEvent>> getAttackingAbilities() {
         return Map.copyOf(ATTACKING_ABILITIES);
     }
 
