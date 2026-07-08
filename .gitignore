@@ -1,0 +1,19 @@
+# Gradle folders
+.gradle
+build
+
+# IntelliJ
+out/
+.idea
+*.iml
+.idea_modules/
+
+# jvm crash logs
+hs_err_pid*
+
+# Ignoring dev server
+run
+
+# Random stuff
+.DS_Store
+desktop.ini

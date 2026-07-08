@@ -1,0 +1,6 @@
+name: LegendsLib
+version: '${version}'
+author: TurboJax
+
+api-version: '${minecraftVersion}'
+main: org.turbojax.legendslib.LegendsLib
