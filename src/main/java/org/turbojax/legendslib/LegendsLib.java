@@ -22,6 +22,11 @@ public final class LegendsLib extends JavaPlugin {
         // Starting the global loop
         GlobalLoop.init(this);
         GlobalLoop.start();
+
+        // Registering the main command
+        getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS,  commands -> {
+            commands.registrar().register(new LegendsLibCommand(this).build());
+        });
     }
 
     public WeaponConfig getWeaponConfig() {
