@@ -1,3 +1,5 @@
 Add a way to enable/disable registered abilities and weapons.
 Add a way to manage items from ingame.
 Add a listener to activate the primary/secondary abilities.
+Add custom item names/lore
+Figure out a custom item id thing to allow tracking of items and updating of abilities
