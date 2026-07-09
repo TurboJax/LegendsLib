@@ -74,22 +74,21 @@ public class LegendsLibCommand {
         }
 
         String weaponKey = ctx.getArgument("weapon", String.class);
-        LegendaryWeapon weapon = plugin.getWeaponConfig().getWeapon(weaponKey);
 
         // Handling when the weapon doesn't exist
-        if (weapon == null) {
+        if (!plugin.getWeaponConfig().hasWeapon(weaponKey)) {
             sender.sendMessage(Component.text("Weapon \"" + weaponKey + "\" does not exist.  Check the config.", NamedTextColor.RED));
             return 1;
         }
 
         // Preventing disabled weapons from being given out
-        if (!weapon.getEnabled()) {
+        if (!plugin.getWeaponConfig().getEnabled(weaponKey)) {
             sender.sendMessage(Component.text("You cannot give out disabled weapons.", NamedTextColor.RED));
             return 1;
         }
 
         // Making sure the weapon has a material
-        if (weapon.getMaterial() == null) {
+        if (plugin.getWeaponConfig().getMaterial(weaponKey) == null) {
             sender.sendMessage(Component.text("Weapon \"" + weaponKey + "\" is missing a valid Material and cannot be created.", NamedTextColor.RED));
         }
 
@@ -101,19 +100,19 @@ public class LegendsLibCommand {
         } catch (IllegalArgumentException ignored) {}
 
         // Giving the players the weapon
-        ItemStack item = weapon.createItem();
+        ItemStack weapon = plugin.getWeaponConfig().createItem(weaponKey);
 
         // Handling when max stack size is too large
-        int maxStackSize = item.getMaxStackSize();
+        int maxStackSize = weapon.getMaxStackSize();
         while (count > maxStackSize) {
             count -= maxStackSize;
 
-            item.setAmount(maxStackSize);
-            players.forEach(p -> p.give(item));
+            weapon.setAmount(maxStackSize);
+            players.forEach(p -> p.give(weapon));
         }
 
-        item.setAmount(count);
-        players.forEach(p -> p.give(item));
+        weapon.setAmount(count);
+        players.forEach(p -> p.give(weapon));
 
         if (players.size() > 1) {
             sender.sendMessage(Component.text("Gave " + count + " \"" + weaponKey + "\" to " + players.size() + " players", NamedTextColor.GREEN));

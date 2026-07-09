@@ -5,7 +5,11 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.components.CustomModelDataComponent;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.ApiStatus;
 import org.jspecify.annotations.Nullable;
 
 import java.io.File;
@@ -13,6 +17,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WeaponConfig {
     public final LegendsLib plugin;
@@ -98,38 +104,38 @@ public class WeaponConfig {
         return config.contains(key);
     }
 
-    public @Nullable LegendaryWeapon getWeapon(String key) {
+    public @Nullable ItemStack createItem(String key) {
         if (!hasWeapon(key)) return null;
 
-        LegendaryWeapon weapon = new LegendaryWeapon();
+        Material material = getMaterial(key);
+        if (material == null) throw new IllegalArgumentException("Weapons need to have a specified material.");
 
-        weapon.setMaterial(getMaterial(key));
-        weapon.setEnabled(getEnabled(key));
-        weapon.setStackSize(getStackSize(key));
-        weapon.setInventoryAbilities(getInventoryAbilities(key));
-        weapon.setHeldAbilities(getHeldAbilities(key));
-        weapon.setAttackingAbilities(getAttackingAbilities(key));
-        weapon.setPrimaryAbilities(getPrimaryAbilities(key));
-        weapon.setSecondaryAbilities(getSecondaryAbilities(key));
-        weapon.setCmdFloats(getCmdFloats(key));
-        weapon.setCmdStrings(getCmdStrings(key));
-        weapon.setItemModel(getItemModel(key));
+        ItemStack item = new ItemStack(material);
 
-        return weapon;
-    }
+        // Editing the item metadata
+        item.editMeta(meta -> {
+            // Editing the custom model data
+            CustomModelDataComponent cmd = meta.getCustomModelDataComponent();
+            cmd.setFloats(getCmdFloats(key));
+            cmd.setStrings(getCmdStrings(key));
+            meta.setCustomModelDataComponent(cmd);
 
-    public void saveWeapon(String key, LegendaryWeapon weapon) {
-        setMaterial(key, weapon.getMaterial());
-        setEnabled(key, weapon.getEnabled());
-        setStackSize(key, weapon.getStackSize());
-        setInventoryAbilities(key, weapon.getInventoryAbilities());
-        setHeldAbilities(key, weapon.getHeldAbilities());
-        setAttackingAbilities(key, weapon.getAttackingAbilities());
-        setPrimaryAbilities(key, weapon.getPrimaryAbilities());
-        setSecondaryAbilities(key, weapon.getSecondaryAbilities());
-        setCmdFloats(key, weapon.getCmdFloats());
-        setCmdStrings(key, weapon.getCmdStrings());
-        setItemModel(key, weapon.getItemModel());
+            // Editing the item model
+            meta.setItemModel(getItemModel(key));
+
+            // Editing the stack size
+            meta.setMaxStackSize(getStackSize(key));
+
+            // Storing the abilities in the pdc
+            PersistentDataContainer pdc = meta.getPersistentDataContainer();
+            pdc.set(LegendaryWeapon.INVENTORY_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getInventoryAbilities(key)));
+            pdc.set(LegendaryWeapon.HELD_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getHeldAbilities(key)));
+            pdc.set(LegendaryWeapon.ATTACKING_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getAttackingAbilities(key)));
+            pdc.set(LegendaryWeapon.PRIMARY_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getPrimaryAbilities(key)));
+            pdc.set(LegendaryWeapon.SECONDARY_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getSecondaryAbilities(key)));
+        });
+
+        return item;
     }
 
     public @Nullable Material getMaterial(String key) {
@@ -218,5 +224,19 @@ public class WeaponConfig {
 
     public void setSecondaryAbilities(String key, List<NamespacedKey> secondaryAbilities) {
         config.set(key + ".secondary_abilities", secondaryAbilities.stream().map(NamespacedKey::toString).toList());
+    }
+
+    // Serialization helpers
+
+    @ApiStatus.Internal
+    public static String serializeAbilities(List<NamespacedKey> abilities) {
+        return abilities.stream().map(NamespacedKey::toString).collect(Collectors.joining(";"));
+    }
+
+    @ApiStatus.Internal
+    public static List<NamespacedKey> deserializeAbilities(@Nullable String abilities) {
+        if (abilities == null) return List.of();
+
+        return Stream.of(abilities.split(";")).map(NamespacedKey::fromString).filter(Objects::nonNull).toList();
     }
 }
