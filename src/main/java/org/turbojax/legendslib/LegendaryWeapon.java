@@ -11,6 +11,7 @@ import org.jspecify.annotations.NullMarked;
 import java.util.List;
 import java.util.UUID;
 
+/** Utility class for ItemStacks that helps with managing the data stored in a LegendaryWeapon. */
 @NullMarked
 public class LegendaryWeapon {
     public static final NamespacedKey INVENTORY_ABILITIES_KEY = new NamespacedKey("legendslib", "inventory_abilities");
@@ -19,10 +20,10 @@ public class LegendaryWeapon {
     public static final NamespacedKey PRIMARY_ABILITIES_KEY = new NamespacedKey("legendslib", "primary_abilities");
     public static final NamespacedKey SECONDARY_ABILITIES_KEY = new NamespacedKey("legendslib", "secondary_abilities");
     public static final NamespacedKey KILL_COUNT_KEY = new NamespacedKey("legendslib", "kill_count");
-    public static final NamespacedKey UID_KEY = new NamespacedKey("legendslib", "uid");
+    public static final NamespacedKey WEAPON_KEY = new NamespacedKey("legendslib", "weapon_key");
 
     public static boolean isLegendary(ItemStack item) {
-        return item.getPersistentDataContainer().has(INVENTORY_ABILITIES_KEY);
+        return item.getPersistentDataContainer().has(WEAPON_KEY);
     }
 
     public static List<NamespacedKey> getAbilities(AbilityType abilityType, ItemStack item) {

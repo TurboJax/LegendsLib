@@ -133,6 +133,9 @@ public class WeaponConfig {
             pdc.set(LegendaryWeapon.ATTACKING_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getAttackingAbilities(key)));
             pdc.set(LegendaryWeapon.PRIMARY_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getPrimaryAbilities(key)));
             pdc.set(LegendaryWeapon.SECONDARY_ABILITIES_KEY, PersistentDataType.STRING, serializeAbilities(getSecondaryAbilities(key)));
+
+            // Storing the weapon key
+            pdc.set(LegendaryWeapon.WEAPON_KEY, PersistentDataType.STRING, key);
         });
 
         return item;
