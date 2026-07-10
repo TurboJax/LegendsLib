@@ -1,4 +1,4 @@
-package org.turbojax.legendslib;
+package org.turbojax.legendslib.commands;
 
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
@@ -15,6 +15,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.turbojax.legendslib.LegendsLib;
 
 import java.util.List;
 import java.util.Objects;

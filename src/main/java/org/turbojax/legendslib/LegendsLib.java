@@ -7,6 +7,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.turbojax.legendslib.commands.LegendsLibCommand;
 import org.turbojax.legendslib.listeners.EntityDamageListener;
 import org.turbojax.legendslib.listeners.PlayerDeathListener;
 
