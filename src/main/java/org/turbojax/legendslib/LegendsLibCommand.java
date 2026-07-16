@@ -7,6 +7,7 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.tree.LiteralCommandNode;
 import io.papermc.paper.command.brigadier.CommandSourceStack;
 import io.papermc.paper.command.brigadier.Commands;
+import io.papermc.paper.command.brigadier.MessageComponentSerializer;
 import io.papermc.paper.command.brigadier.argument.ArgumentTypes;
 import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSelectorArgumentResolver;
 import net.kyori.adventure.text.Component;
@@ -17,9 +18,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
-import java.util.Objects;
 
 public class LegendsLibCommand {
+    private static final MessageComponentSerializer msgSerializer = MessageComponentSerializer.message();
     private static final Component helpMsg = MiniMessage.miniMessage()
             .deserialize("""
                      <dark_gray> ------------< <aqua>Legends<blue>Lib <dark_gray>>------------
@@ -66,7 +67,7 @@ public class LegendsLibCommand {
         try {
             players = ctx.getArgument("players", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource());
         } catch (CommandSyntaxException err) {
-            sender.sendMessage(Objects.requireNonNull(err.componentMessage()));
+            sender.sendMessage(msgSerializer.deserialize(err.getRawMessage()));
         }
 
         if (players.isEmpty()) {
