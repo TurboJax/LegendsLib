@@ -41,9 +41,9 @@ public class LegendsLibCommand {
                         .then(Commands.argument("players", ArgumentTypes.players())
                                 .then(Commands.argument("weapon", StringArgumentType.string())
                                         .then(Commands.argument("count", IntegerArgumentType.integer(1))
-                                                .executes(this::giveWeapon)
+                                                .executes(c -> giveWeapon(c, c.getArgument("players", PlayerSelectorArgumentResolver.class), c.getArgument("weapon", String.class), c.getArgument("count", Integer.class)))
                                         )
-                                        .executes(this::giveWeapon)
+                                        .executes(c -> giveWeapon(c, c.getArgument("players", PlayerSelectorArgumentResolver.class), c.getArgument("weapon", String.class), 1))
                                         .suggests((ctx, builder) -> {
                                             plugin.getWeaponConfig().getWeapons().stream().forEach(builder::suggest);
                                             return builder.buildFuture();
@@ -60,12 +60,12 @@ public class LegendsLibCommand {
                 .build();
     }
 
-    public int giveWeapon(CommandContext<CommandSourceStack> ctx) {
+    public int giveWeapon(CommandContext<CommandSourceStack> ctx, PlayerSelectorArgumentResolver resolver, String weaponKey, int count) {
         CommandSender sender = ctx.getSource().getSender();
 
         List<Player> players = List.of();
         try {
-            players = ctx.getArgument("players", PlayerSelectorArgumentResolver.class).resolve(ctx.getSource());
+            players = resolver.resolve(ctx.getSource());
         } catch (CommandSyntaxException err) {
             sender.sendMessage(msgSerializer.deserialize(err.getRawMessage()));
         }
@@ -73,8 +73,6 @@ public class LegendsLibCommand {
         if (players.isEmpty()) {
             sender.sendMessage(Component.text("No players found", NamedTextColor.RED));
         }
-
-        String weaponKey = ctx.getArgument("weapon", String.class);
 
         // Handling when the weapon doesn't exist
         if (!plugin.getWeaponConfig().hasWeapon(weaponKey)) {
@@ -92,13 +90,6 @@ public class LegendsLibCommand {
         if (plugin.getWeaponConfig().getMaterial(weaponKey) == null) {
             sender.sendMessage(Component.text("Weapon \"" + weaponKey + "\" is missing a valid Material and cannot be created.", NamedTextColor.RED));
         }
-
-        // Getting the amount of weapons the player should be given
-        int count = 1;
-
-        try {
-            count = ctx.getArgument("count", Integer.class);
-        } catch (IllegalArgumentException ignored) {}
 
         // Giving the players the weapon
         ItemStack weapon = plugin.getWeaponConfig().createItem(weaponKey);
