@@ -9,6 +9,7 @@ import org.bukkit.persistence.PersistentDataType;
 import org.jspecify.annotations.NullMarked;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /** Utility class for ItemStacks that helps with managing the data stored in a LegendaryWeapon. */
@@ -24,6 +25,10 @@ public class LegendaryWeapon {
 
     public static boolean isLegendary(ItemStack item) {
         return item.getPersistentDataContainer().has(WEAPON_KEY);
+    }
+
+    public static String getKey(ItemStack item) {
+        return Objects.requireNonNull(item.getPersistentDataContainer().get(WEAPON_KEY, PersistentDataType.STRING));
     }
 
     public static List<NamespacedKey> getAbilities(AbilityType abilityType, ItemStack item) {
