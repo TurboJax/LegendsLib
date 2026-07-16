@@ -1,7 +1,18 @@
 weapon:
   - count: 3
-    location: (x, y, z) # May be inaccurate by a few blocks
+    entity: (x, y, z, world)
   - count: 2
     player: TurboJax07
+  - count: 2
+    echest: TurboJax07
   - count: 4
-    storage: (x, y, z) # Block location
+    storage: (x, y, z, world)
+
+{
+  "weapon": [
+    {
+      "count": 3,
+      "location": "(x, y, z, world)"
+    }
+  ]
+}
