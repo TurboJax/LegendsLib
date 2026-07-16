@@ -2,6 +2,7 @@ package org.turbojax.legendslib;
 
 import io.papermc.paper.threadedregions.scheduler.ScheduledTask;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Item;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -37,6 +38,19 @@ public class GlobalLoop implements Consumer<ScheduledTask> {
     public void accept(ScheduledTask task) {
         if (!running) return;
 
+        // Looping over every entity in every loaded world
+        Bukkit.getWorlds().forEach(w -> {
+            w.getEntities().stream()
+                    .filter(e -> e instanceof Item)
+                    .map(e -> (Item) e)
+                    .filter(i -> LegendaryWeapon.isLegendary(i.getItemStack()))
+                    .forEach(i -> {
+                        // TODO: Record item location in config
+
+                    });
+        });
+
+        // Looping over every player's inventory
         for (Player p : Bukkit.getOnlinePlayers()) {
             for (ItemStack item : p.getInventory()) {
                 // Skipping empty slots
